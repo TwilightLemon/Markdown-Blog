@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css" crossorigin="anonymous">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Blog</title>
-</head>
+<%- include('_head') %>
+<%- include('_style') %>
 <body>
+<%- include('_nav') %>
   <div class="container">
-    <h1 class="mb-1"><%= article.title %></h1>
+    <h1 class="mb-1 text-white"><%= article.title %></h1>
     <div class="text-muted mb-2">
       <%= article.createdAt.toLocaleDateString() %>
     </div>
