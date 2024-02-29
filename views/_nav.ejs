@@ -1,0 +1,16 @@
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+    <span class="navbar-text">
+    Twlm's Blog
+    </span>
+    <% if(login){%>
+    <div class="nav navbar-nav ml-auto" style="position: absolute; right: 20px;">
+        <span class="navbar-text">welcome back, <%= login_nickname%>!&nbsp;</span>
+        <button type="button" class="btn btn-outline-primary me-2 btn-sm" onclick="location.href='/login/signout'">Sign out</button>
+    </div>
+    <%}else{%>
+    <div class="nav navbar-nav ml-auto" style="position: absolute; right: 20px;">
+        <button type="button" class="btn btn-outline-primary me-2 btn-sm" onclick="location.href='/login'">Sign in</button>
+    </div>
+    <%}%>
+</nav>
+<br/><br/>

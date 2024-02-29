@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include('_head') %>
-<%- include('_style') %>
+<%- include('../_head.ejs') %>
+<%- include('../_style.ejs') %>
+<%- include('../_nav.ejs') %>
 <body>
-<%- include('_nav') %>
   <div class="container">
     <h1 class="mb-1 text-white"><%= article.title %></h1>
     <div class="text-muted mb-2">
-      <%= article.createdAt.toLocaleDateString() %>
+      <%= article.description %>
+      <br/>
+      <%= article.createdAt.toLocaleDateString() %> by <%= article.authorName %>
     </div>
     <a href="/" class="btn btn-secondary">All Articles</a>
+    <%if(login&&login_email===article.author){%>
     <a href="/articles/edit/<%= article.id %>" class="btn btn-info">Edit</a>
-
+    <%}%>
     <div>
       <%- article.sanitizedHtml %>
     </div>

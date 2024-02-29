@@ -3,6 +3,8 @@ const mongoose = require('mongoose')
 const Article = require('./models/article')
 const articleRouter = require('./routes/articles')
 const methodOverride = require('method-override')
+const cookieParser = require('cookie-parser')
+const auth = require('./apis/loginAuth')
 const app = express()
 
 mongoose.connect('mongodb://localhost/blog', {
@@ -12,12 +14,13 @@ mongoose.connect('mongodb://localhost/blog', {
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 app.use(methodOverride('_method'))
-
+app.use(cookieParser())
 app.get('/', async (req, res) => {
   const articles = await Article.find().sort({ createdAt: 'desc' })
-  res.render('articles/index', { articles: articles })
+  res.render('articles/index',await auth.packConfWith(req.cookies, { articles: articles }))
 })
 
 app.use('/articles', articleRouter)
+app.use('/login', require('./routes/login'))
 
 app.listen(8888)

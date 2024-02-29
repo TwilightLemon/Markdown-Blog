@@ -13,6 +13,14 @@ const articleSchema = new mongoose.Schema({
   description: {
     type: String
   },
+  author: {
+    type: String,
+    required: true
+  },
+  authorName: {
+    type: String,
+    required: true
+  },
   markdown: {
     type: String,
     required: true
