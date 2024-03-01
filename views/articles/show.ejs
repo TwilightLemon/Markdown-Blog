@@ -6,16 +6,19 @@
 <body>
   <div class="container">
     <h1 class="mb-1 text-white"><%= article.title %></h1>
-    <div class="text-muted mb-2">
+    <div class="mb-2" style="color:rgba(253,253,253,0.6)">
       <%= article.description %>
       <br/>
       <%= article.createdAt.toLocaleDateString() %> by <%= article.authorName %>
     </div>
-    <a href="/" class="btn btn-secondary">All Articles</a>
+    <a href="/" class="btn btn-rounded btn-primary">All Articles</a>
     <%if(login&&login_email===article.author){%>
     <a href="/articles/edit/<%= article.id %>" class="btn btn-info">Edit</a>
+      <form action="/articles/<%= article.id %>?_method=DELETE" method="POST" class="d-inline">
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
     <%}%>
-    <div>
+    <div style="color:rgb(253,253,253)">
       <%- article.sanitizedHtml %>
     </div>
   </div>
