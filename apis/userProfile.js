@@ -23,7 +23,7 @@ async function sendVerificationCode(email){
 module.exports.sendVerificationCode=sendVerificationCode
 
 async function getName(email){
-    let user = await User.findOne({email: cookies.email})
+    let user = await User.findOne({email: email})
     return user?user.name:null
 }
 module.exports.getName=getName

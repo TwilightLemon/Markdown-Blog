@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
             const up=require('../apis/userProfile')
             let code=await up.sendVerificationCode(req.body.email)
             res.cookie('VerificationCode',auth.signPsw(code),{maxAge:1000*60*5})
-            res.render('account/login', {login:false,exist: false, confirmed: true,email: req.body.email,msg:""})
+            res.render('account/login', {psw:"",name:"",login:false,exist: false, confirmed: true,email: req.body.email,msg:""})
         }
     }
 })
@@ -49,7 +49,7 @@ router.post('/reg',async (req, res) => {
         auth.createLoginToken(res, user.email, user.saltedPsw, user.name);
         res.redirect('/')
     }else{
-        res.render('account/login', {login:false,exist: false, confirmed: true,email: req.body.email,msg:"Wrong Verification Code!"})
+        res.render('account/login', {psw: req.body.password,name: req.body.name,login:false,exist: false, confirmed: true,email: req.body.email,msg:"Wrong Verification Code!"})
     }
 })
 

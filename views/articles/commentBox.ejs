@@ -1,0 +1,38 @@
+<div class="container">
+    <%if(login){%>
+    <div class="card">
+        <div class="card-body">
+    <form method="POST" action="/comments/add">
+        <div class="form-group">
+            <label for="comment">Comment:</label>
+            <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+        </div>
+        <input type="hidden" name="articleId" id="articleId" value="<%= article.id%>">
+        <br/>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+        </div>
+    </div>
+    <%}%>
+    <br/>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Comments</h5>
+            <% comments.forEach((comment)=>{ %>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= comment.name %></h5>
+                        <p class="card-text"><%= comment.comment %></p>
+                        <%if(login&&login_email===comment.email){%>
+                            <form action="/comments/<%= comment.id %>?_method=DELETE" method="POST" class="d-inline">
+                                <input type="hidden" name="articleId" id="articleId" value="<%= article.id%>">
+                                <button type="submit" style="position: absolute; right: 20px; bottom:40px" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        <%}%>
+                    </div>
+                </div>
+            <br>
+            <% }); %>
+        </div>
+    </div>
+</div>
