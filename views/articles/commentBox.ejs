@@ -13,6 +13,38 @@
     </form>
         </div>
     </div>
+
+        <script>
+            function replyTo(name,commentId){
+                document.getElementById('replyTo').innerHTML = "Reply To: "+name;
+                document.getElementById('commentId').value = commentId;
+                document.getElementById('replyContent').value = "@"+name+": ";
+            }
+        </script>
+
+        <!-- 回复评论弹窗 -->
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content" >
+
+                    <div class="modal-header">
+                        <h4 id="replyTo" class="modal-title">Reply To:</h4>
+                        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form method="POST" action="/comments/add/?type=reply">
+                            <input class="form-control" id="replyContent" name="replyContent" rows="3"></textarea>
+                            <input type="hidden" name="articleId" id="articleId" value="<%= article.id%>">
+                            <input type="hidden" name="commentId" id="commentId" value="">
+                            <br/>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <%}%>
     <br/>
     <div class="card">
@@ -22,6 +54,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title"><%= comment.name %></h5>
+                        <h6 style="display: inline;color:rgba(240,240,240,0.6);"><%= comment.createdAt.toLocaleTimeString()%></h6>
                         <p class="card-text"><%= comment.comment %></p>
                         <%if(login&&login_email===comment.email){%>
                             <form action="/comments/<%= comment.id %>?_method=DELETE" method="POST" class="d-inline">
@@ -29,6 +62,10 @@
                                 <button type="submit" style="position: absolute; right: 20px; bottom:40px" class="btn btn-danger btn-sm">Delete</button>
                             </form>
                         <%}%>
+                        <%if(login){%>
+                            <button type="button" onclick="replyTo('<%= comment.name %>','<%= comment.id %>')" style="position: absolute; right: <%=login_email===comment.email?150:20%>px; bottom:40px" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Reply</button>
+                        <%}%>
+                        <h6 style="font-size: 12px;color:rgba(240,240,240,0.6);"><%= comment.createdAt%></h6>
                     </div>
                 </div>
             <br>

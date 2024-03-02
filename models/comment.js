@@ -6,7 +6,7 @@ const commentSchema=new mongoose.Schema({
         required:true
     },
     comments:{
-        type:[{email:String,comment:String}],
+        type:[{email:String,comment:String,createdAt:{type:Date,default:Date.now}}],
         required:true
     }
 
