@@ -3,6 +3,21 @@
 <%- include('../_head.ejs') %>
 <%- include('../_style.ejs') %>
 <%- include('../_nav.ejs') %>
+<%if(login){%>
+  <script>
+    function like(articleId){
+      $.ajax({
+        url:'/comments/like',
+        type:'POST',
+        data:{articleId:articleId},
+        success:function(data){
+          $('#likeBtn').html(data.likes+'&nbsp;Likes');
+        }
+      });
+    }
+  </script>
+<%}%>
+
 <body>
   <div class="container">
     <h1 class="mb-1 text-white"><%= article.title %></h1>
@@ -17,6 +32,9 @@
       <form action="/articles/<%= article.id %>?_method=DELETE" method="POST" class="d-inline">
         <button type="submit" class="btn btn-danger">Delete</button>
       </form>
+    <%}%>
+    <%if(login){%>
+    <button type="button" id="likeBtn" onclick="like('<%=article.id%>')" class="btn btn-primary"><%=likes%>&nbsp;Likes</button>
     <%}%>
     <div style="color:rgb(253,253,253)">
       <%- article.sanitizedHtml %>

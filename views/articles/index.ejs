@@ -11,7 +11,7 @@
     <%}%>
     <% articles.forEach(article => { %>
       <div class="card mt-4">
-        <div class="card-body" style="cursor: pointer" onclick="window.location.href='articles/<%= article.slug %>'">
+        <div class="card-body" style="cursor: pointer" onclick="window.location.href='articles/<%= article.id %>'">
           <h4 class="card-title"><%= article.title %></h4>
           <div class="card-subtitle">
             <%= article.createdAt.toLocaleDateString() %>

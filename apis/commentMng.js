@@ -2,6 +2,7 @@ const commentDB=require('../models/comment')
 const auth=require('../apis/loginAuth')
 const up=require('../apis/userProfile')
 
+
 async function getArticleComments(articleId){
     let comments=await commentDB.findOne({articleId:articleId})
     let commentsList=[]
@@ -15,7 +16,7 @@ async function getArticleComments(articleId){
             })
         }
     }
-    return commentsList
+    return {comments:commentsList,likeCount:comments?comments.likes.length:0}
 }
 module.exports.getArticleComments=getArticleComments
 
@@ -68,3 +69,34 @@ async function deleteComment(articleId,commentId,cookies){
     }
 }
 module.exports.deleteComment=deleteComment
+
+async function setLikesForArticle(articleId,cookies){
+    if(await auth.checkLoginToken(cookies)) {
+        let userId = cookies.email
+        let article = await commentDB.findOne({articleId: articleId})
+        let success=false
+        if(article){
+            let likes=article.likes
+            if(likes.includes(userId)){
+                likes.splice(likes.indexOf(userId),1)
+            }else{
+                likes.push(userId)
+            }
+            await article.save()
+            success=true
+        }else{
+            article=new commentDB({
+                articleId:articleId,
+                likes:[userId]
+            })
+            await article.save()
+            success=true
+        }
+
+        if(success){
+            return article.likes.length
+        }
+    }
+    return -1
+}
+module.exports.setLikesForArticle=setLikesForArticle
