@@ -26,5 +26,6 @@ app.get('/', async (req, res) => {
 app.use('/articles', articleRouter)
 app.use('/comments', require('./routes/comments'))
 app.use('/login', require('./routes/login'))
+app.use('/profile', require('./routes/profile'))
 
 app.listen(8888)

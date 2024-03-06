@@ -13,11 +13,23 @@ const userSheme=new mongoose.Schema({
     saltedPsw:{
         type:String,
         required:true
+    },
+    /// 0: admin,1: normal user
+    auth:{
+        type:Number,
+        required:false
     }
 });
 
 userSheme.pre('validate',function(next){
     this.saltedPsw=auth.signPsw(this.saltedPsw)
+    if(this.auth==null){
+        this.auth=1
+    }
     next()
+})
+userSheme.post('findOne',function(doc){
+    if(doc&&doc.auth==null)
+        doc.auth=1
 })
 module.exports=mongoose.model('User',userSheme)

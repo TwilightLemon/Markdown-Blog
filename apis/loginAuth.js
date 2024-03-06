@@ -15,29 +15,36 @@ function createLoginToken(res,email,saltedPsw,name){
 }
 module.exports.createLoginToken=createLoginToken
 async function checkLoginToken(cookies) {
+    let result={
+        login:false,
+        user:null
+    }
     if (cookies.loginToken && cookies.email && cookies.name) {
         const User = require('../models/user');
         let user = await User.findOne({email: cookies.email});
         if (user) {
             let token = crypto.createHash('sha256').update(salt + cookies.email + salt + user.saltedPsw).digest('hex');
             if (token === cookies.loginToken) {
-                return true;
+                result.user=user
+                result.login=true
             }
         }
     }
-    return false;
+    return result
 }
 module.exports.checkLoginToken=checkLoginToken
 
 async function packConfWith(cookies,conf){
     console.log(cookies)
-    if(await checkLoginToken(cookies)) {
+    let data=await checkLoginToken(cookies)
+    if(data.login) {
         console.log("logged in")
         let newConf={
             ...conf,
             login: true,
             login_email: cookies.email,
-            login_nickname: cookies.name
+            login_nickname: cookies.name,
+            login_auth: data.user.auth
         }
         console.log(newConf)
         return newConf;
