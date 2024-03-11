@@ -18,11 +18,18 @@ const userSheme=new mongoose.Schema({
     auth:{
         type:Number,
         required:false
+    },
+    signed:{
+        type:Boolean,
+        required:false
     }
 });
 
 userSheme.pre('validate',function(next){
-    this.saltedPsw=auth.signPsw(this.saltedPsw)
+    if(!this.signed) {
+        this.saltedPsw = auth.signPsw(this.saltedPsw)
+        this.signed=true;
+    }
     if(this.auth==null){
         this.auth=1
     }

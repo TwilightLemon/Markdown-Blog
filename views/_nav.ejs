@@ -4,7 +4,7 @@
     </span>
     <% if(login){%>
     <div class="nav navbar-nav ml-auto" style="position: absolute; right: 20px;">
-        <span class="navbar-text">welcome back, <%= login_nickname%>!&nbsp;</span>
+        <span id="loginUser" class="navbar-text"> welcome back, <a href="/profile/"><%= login_nickname%></a>!&nbsp;</span>
         <button type="button" class="btn btn-outline-primary me-2 btn-sm" onclick="location.href='/login/signout'">Sign out</button>
     </div>
     <%}else{%>

@@ -1,5 +1,6 @@
 const User = require("../models/user")
 const emailService=require("nodemailer")
+const auth=require("../apis/loginAuth")
 
 async function sendVerificationCode(email){
     let sender=emailService.createTransport({
@@ -27,3 +28,15 @@ async function getName(email){
     return user?user.name:null
 }
 module.exports.getName=getName
+
+async function setName(newName,cookies){
+    let authData=await auth.checkLoginToken(cookies)
+    if(authData){
+        let user=authData.user;
+        user.name=newName;
+        user.save();
+        return true;
+    }
+    return false;
+}
+module.exports.setName=setName;

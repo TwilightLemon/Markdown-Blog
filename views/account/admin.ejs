@@ -3,11 +3,48 @@
 <%- include('../_head.ejs') %>
 <%- include('../_style.ejs') %>
 <%- include('../_nav.ejs') %>
-
+<script>
+    $(function(){
+        $('#setNewNameForm').on('submit',(e)=>{
+            e.preventDefault();
+            let newName=$(this).find('input[name=newName]').val();
+            if(newName==='') {
+                alert("总得有个名字吧？");
+                return;
+            }
+            $.ajax({
+                url:'/profile/',
+                method:'POST',
+                data:{
+                    method:"setName",
+                    newName:newName
+                },
+                success:(res)=> {
+                    if (res.success) {
+                        alert("succeeded to change your name to " + newName);
+                        $('#titleH1').html("Hello, " + newName);
+                        $('#loginUser').html(`welcome back, <a href="/profile/">` + newName.toString() + `</a>!&nbsp;`);
+                    }else{
+                        alert("failed to change you name");
+                    }
+                }
+            });
+        });
+    });
+</script>
 <body>
 <div class="container">
-    <h1 class="mb-4 text-white">Hello,&nbsp;<%=login_nickname%>!</h1>
-
+    <h1 id="titleH1" class="mb-4 text-white">Hello,&nbsp;<%=login_nickname%>!</h1>
+    <div class="card mt-4">
+        <div class="card-body">
+    <form id="setNewNameForm">
+        <label for="newName">change your name:</label>
+        <input type="text" class="form-control" id="newName" name="newName"/>
+        <br/>
+        <button type="submit" class="btn btn-primary">submit</button>
+    </form>
+        </div>
+    </div>
 </div>
 <%- include('../_footer.ejs') %>
 </body>
