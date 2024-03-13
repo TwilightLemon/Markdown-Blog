@@ -4,6 +4,8 @@ const auth = require("../apis/loginAuth");
 const router = express.Router()
 const commentMng=require('../apis/commentMng')
 const mongoose = require("mongoose");
+const createDomPurify = require("dompurify");
+const {JSDOM} = require("jsdom");
 
 router.get('/new', async (req, res) => {
   res.render('articles/new', await auth.packConfWith(req.cookies,{article: new Article()}))
@@ -21,6 +23,14 @@ router.get('/:id', async (req, res) => {
   else {
     let commentsData = await commentMng.getArticleComments(article._id)
     let likeCount=commentsData.likeCount
+
+    const {marked} = require('marked')
+    const createDomPurify = require('dompurify')
+    const { JSDOM } = require('jsdom')
+    const dompurify = createDomPurify(new JSDOM().window)
+    const usProf=require('../apis/userProfile')
+    article.sanitizedHtml = dompurify.sanitize(marked(article.markdown))
+    article.authorName=await usProf.getName(article.author)
     res.render('articles/show', await auth.packConfWith(req.cookies, {article: article, comments: commentsData.comments,likes:likeCount}))
   }
 })
@@ -42,13 +52,13 @@ router.delete('/:id', async (req, res) => {
 
 function saveArticleAndRedirect(path) {
   return async (req, res) => {
-    if(await auth.checkLoginToken(req.cookies)) {
+    let authData=await auth.checkLoginToken(req.cookies);
+    if(authData) {
       let article = req.article
       article.title = req.body.title
       article.description = req.body.description
       article.markdown = req.body.markdown
-      article.author = req.cookies.email
-      article.authorName = req.cookies.name
+      article.author = authData.user.email
       try {
         article = await article.save()
         res.redirect(`/articles/${article.id}`)

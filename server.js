@@ -5,6 +5,7 @@ const articleRouter = require('./routes/articles')
 const methodOverride = require('method-override')
 const cookieParser = require('cookie-parser')
 const auth = require('./apis/loginAuth')
+const usProf=require('./apis/userProfile')
 const globalService = require('./apis/globalService')
 const app = express()
 
@@ -16,10 +17,14 @@ app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 app.use(methodOverride('_method'))
 app.use(cookieParser())
+//app.use('/highlight.js', express.static('node_modules/highlight.js'));
 
 globalService.setBingImgData();
 app.get('/', async (req, res) => {
-  const articles = await Article.find().sort({ createdAt: 'desc' })
+  const articles = await Article.find().sort({ createdAt: 'desc' });
+  for await (let e of articles) {
+    e.authorName = await usProf.getName(e.author);
+  }
   res.render('articles/index',await auth.packConfWith(req.cookies, { articles: articles }))
 })
 

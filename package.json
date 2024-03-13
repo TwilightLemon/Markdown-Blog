@@ -22,6 +22,7 @@
     "slugify": "^1.4.0"
   },
   "devDependencies": {
+    "highlight.js": "^10.6.0",
     "nodemon": "^2.0.2"
   }
 }
