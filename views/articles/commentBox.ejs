@@ -1,31 +1,97 @@
 <div class="container">
-    <%if(login){%>
-    <div class="card">
-        <div class="card-body">
-    <form method="POST" action="/comments/add">
-        <div class="form-group">
-            <label for="comment">Comment:</label>
-            <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+    <% if(login){ %>
+        <div class="card">
+            <div class="card-body">
+                <form id="commentForm" method="POST" action="/comments/add">
+                    <div class="form-group">
+                        <label for="comment">Comment:</label>
+                        <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+                    </div>
+                    <input type="hidden" name="articleId" id="articleId" value="<%= article.id %>">
+                    <br/>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
         </div>
-        <input type="hidden" name="articleId" id="articleId" value="<%= article.id%>">
-        <br/>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-        </div>
-    </div>
 
         <script>
-            function replyTo(name,commentId){
-                document.getElementById('replyTo').innerHTML = "Reply To: "+name;
+            function replyTo(name, commentId) {
+                document.getElementById('replyTo').innerHTML = "Reply To: " + name;
                 document.getElementById('commentId').value = commentId;
-                document.getElementById('replyContent').value = "@"+name+": ";
+                document.getElementById('replyContent').value = "@" + name + ": ";
             }
+
+            $(function () {
+                $(this).on('submit','#commentForm',function (e) {
+                    e.preventDefault();
+                    var form = $(this);
+                    var url = form.attr('action');
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: form.serialize(),
+                        success: function (data) {
+                            console.log(data);
+                            form.find('textarea[name="comment"]').val('');
+                            let comList = $('#commentList');
+                            let item=`
+                            <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= login_nickname %></h5>
+                        <p class="card-text">`+data.comment+`</p>
+                        <p id="commentItemId" style="display: none;">`+data._id+`</p>
+                        <form id="deleteComment" action="/comments/`+data._id+`?_method=DELETE" method="POST" class="d-inline">
+                                <input type="hidden" name="articleId" id="articleId" value="<%= article.id %>">
+                                <button type="submit" style="position: absolute; right: 20px; bottom:40px"
+                                        class="btn btn-danger btn-sm">Delete
+                                </button>
+                        </form>
+                        <button type="button" onclick="replyTo('<%= login_nickname %>','`+data._id+`')"
+                                    style="position: absolute; right: 90px; bottom:40px"
+                                    class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Reply
+                            </button>
+                        <h6 style="font-size: 12px;color:rgba(240,240,240,0.6);">`+data.createdAt+`</h6>
+                    </div>
+                </div>
+                            `;
+                            if(url.toString().includes('type=reply')) {
+                                var commentId = form.find('input[name="commentId"]').val();
+                                console.log(commentId);
+                                comList.find('.card-body').each(function () {
+                                    if ($(this).find('p#commentItemId').text() === commentId) {
+                                        $(this).parent().after(item);
+                                        $("#myModal").modal('hide');
+                                    }
+                                });
+                            }else{
+                                comList.append(item);
+                            }
+                        }
+                    });
+                });
+                $('#commentList').on('submit', '#deleteComment', function (e) {
+                    e.preventDefault();
+                    var form = $(this);
+                    var url = form.attr('action');
+                    $.ajax({
+                        type: "DELETE",
+                        url: url,
+                        data: form.serialize(),
+                        success: function (data) {
+                            console.log(data);
+                            if(data.success) {
+                                form.parent().parent().remove();
+                            }
+                        }
+                    });
+                });
+            });
         </script>
 
         <!-- 回复评论弹窗 -->
         <div class="modal fade" id="myModal">
             <div class="modal-dialog">
-                <div class="modal-content" >
+                <div class="modal-content">
 
                     <div class="modal-header">
                         <h4 id="replyTo" class="modal-title">Reply To:</h4>
@@ -33,10 +99,10 @@
                     </div>
 
                     <div class="modal-body">
-                        <form method="POST" action="/comments/add/?type=reply">
-                            <input class="form-control" id="replyContent" name="replyContent" rows="3"></textarea>
-                            <input type="hidden" name="articleId" id="articleId" value="<%= article.id%>">
-                            <input type="hidden" name="commentId" id="commentId" value="">
+                        <form id="commentForm" method="POST" action="/comments/add/?type=reply">
+                            <input class="form-control" id="replyContent" name="replyContent" rows="3"/>
+                            <input type="hidden" name="articleId" id="articleId" value="<%= article.id %>"/>
+                            <input type="hidden" name="commentId" id="commentId" value=""/>
                             <br/>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
@@ -45,29 +111,34 @@
             </div>
         </div>
 
-    <%}%>
+    <% } %>
     <br/>
     <div class="card">
-        <div class="card-body">
+        <div id="commentList" class="card-body">
             <h5 class="card-title">Comments</h5>
             <% comments.forEach((comment)=>{ %>
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title"><%= comment.name %></h5>
                         <p class="card-text"><%= comment.comment %></p>
-                        <%if(login&&login_email===comment.email){%>
-                            <form action="/comments/<%= comment.id %>?_method=DELETE" method="POST" class="d-inline">
-                                <input type="hidden" name="articleId" id="articleId" value="<%= article.id%>">
-                                <button type="submit" style="position: absolute; right: 20px; bottom:40px" class="btn btn-danger btn-sm">Delete</button>
+                        <p id="commentItemId" style="display: none;"><%= comment.id %></p>
+                        <% if(login && login_email === comment.email){ %>
+                            <form id="deleteComment" action="/comments/<%= comment.id %>?_method=DELETE" method="POST" class="d-inline">
+                                <input type="hidden" name="articleId" id="articleId" value="<%= article.id %>">
+                                <button type="submit" style="position: absolute; right: 20px; bottom:40px"
+                                        class="btn btn-danger btn-sm">Delete
+                                </button>
                             </form>
-                        <%}%>
-                        <%if(login){%>
-                            <button type="button" onclick="replyTo('<%= comment.name %>','<%= comment.id %>')" style="position: absolute; right: <%=login_email===comment.email?150:20%>px; bottom:40px" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Reply</button>
-                        <%}%>
-                        <h6 style="font-size: 12px;color:rgba(240,240,240,0.6);"><%= comment.createdAt%></h6>
+                        <% } %>
+                        <% if(login){ %>
+                            <button type="button" onclick="replyTo('<%= comment.name %>','<%= comment.id %>')"
+                                    style="position: absolute; right: <%= login_email === comment.email ? 90 : 20 %>px; bottom:40px"
+                                    class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Reply
+                            </button>
+                        <% } %>
+                        <h6 style="font-size: 12px;color:rgba(240,240,240,0.6);"><%= comment.createdAt %></h6>
                     </div>
                 </div>
-            <br>
             <% }); %>
         </div>
     </div>

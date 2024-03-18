@@ -12,6 +12,21 @@
  - [x] 文章管理：发布、修改、删除、查看
  - [x] 互动功能：评论、回复、文章点赞
 
+### 开发文档：
+#### 数据库结构
+```mermaid
+graph TD
+    blog[blog]-->article[articles]-..->文章基本内容
+    blog-->user[users]-..->用户信息
+    blog-->comment[comments]-..->a(文章评论、点赞等互动内容)
+    
+```
+#### apis
+```mermaid
+graph TD
+    
+```
+
 ### 注释：
 mongoDB linker:
 ```
