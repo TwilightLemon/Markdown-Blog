@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const auth = require('../apis/loginAuth');
+const up = require("../apis/userProfile");
 
 
 function setGlobalEncoder() {
@@ -28,7 +29,7 @@ function setGlobalEncoder() {
 //Login Page
 router.get('/', (req, res) => {
     setGlobalEncoder();
-    res.render('account/login', {exist: false, confirmed: false, login: false, msg: ""});
+    res.render('account/login', {title:"Login",exist: false, confirmed: false, login: false, msg: ""});
 });
 router.get('/signout', (req, res) => {
     res.cookie('loginToken', '', {maxAge: 1});
@@ -45,6 +46,7 @@ router.post('/', async (req, res) => {
             res.redirect('/');
         } else {
             res.render('account/login', {
+                title:"Login",
                 login: false,
                 exist: true,
                 confirmed: true,
@@ -56,6 +58,7 @@ router.post('/', async (req, res) => {
         let user = await User.findOne({email: req.body.email});
         if (user) {
             res.render('account/login', {
+                title:"Login",
                 login: false,
                 exist: true,
                 confirmed: true,
@@ -68,6 +71,7 @@ router.post('/', async (req, res) => {
             let code = await up.sendVerificationCode(req.body.email);
             res.cookie('VerificationCode', auth.signPsw(code), {maxAge: 1000 * 60 * 5});
             res.render('account/login', {
+                title:"Register",
                 psw: "",
                 name: "",
                 login: false,
@@ -79,19 +83,49 @@ router.post('/', async (req, res) => {
         }
     }
 });
+
+const resetHandler=async(req,res)=> {
+    let loginData = await auth.checkLoginToken(req.cookies);
+    let email = undefined;
+    if (req.body.email)
+        email = req.body.email;
+    if (email) {
+        const up = require('../apis/userProfile');
+        let code = await up.sendVerificationCode(email);
+        res.cookie('VerificationCode', auth.signPsw(code), {maxAge: 1000 * 60 * 5});
+        res.render('account/login', {
+            title:"Reset",
+            psw: "",
+            name: loginData.login ? loginData.user.name : "",
+            login: false,
+            exist: false,
+            confirmed: true,
+            email: email,
+            msg: ""
+        });
+    } else {
+        setGlobalEncoder();
+        res.render('account/login', {title:"Reset",exist: false, confirmed: false, login: false, msg: "Verify your email:"});
+    }
+};
+router.get('/reset',resetHandler);
+router.post('/reset',resetHandler);
+
 router.post('/reg', async (req, res) => {
     console.log(req.body);
     if (auth.signPsw(req.body.code) === req.cookies.VerificationCode) {
-        let user = new User({
-            email: req.body.email,
-            saltedPsw: req.body.password,
-            name: req.body.name
-        });
+        let existUser=await User.findOne({email:req.body.email});
+        let user=existUser?existUser:new User();
+        user.signed=false;
+        user.saltedPsw=req.body.password;
+        user.name=req.body.name;
+        user.email=req.body.email;
         await user.save();
         auth.createLoginToken(res, user.email, user.saltedPsw, user.name);
         res.redirect('/');
     } else {
         res.render('account/login', {
+            title:"Register",
             psw: req.body.password,
             name: req.body.name,
             login: false,
@@ -102,5 +136,6 @@ router.post('/reg', async (req, res) => {
         });
     }
 });
+
 
 module.exports = router;
