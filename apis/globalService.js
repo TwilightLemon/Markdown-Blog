@@ -1,4 +1,5 @@
 const http = require('http');
+const cron=require('node-cron');
 
 function getBingDailyImage() {
     return new Promise((resolve, reject) => {
@@ -20,8 +21,15 @@ function getBingDailyImage() {
 }
 
 async function setBingImgData() {
-    let img = await getBingDailyImage();
-    global.bingImgData = img;
+    async function update(){
+        global.bingImgData = await getBingDailyImage()
+        console.log("Bing Image Data Updated");
+    }
+    await update();
+    //update every 5h
+    cron.schedule('* * 5 * * *', async () => {
+        await update();
+    });
 }
 
 module.exports.setBingImgData = setBingImgData;

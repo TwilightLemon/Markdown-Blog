@@ -42,7 +42,7 @@ router.post('/', async (req, res) => {
         console.log(user);
         console.log(auth.signPsw(req.body.password));
         if (auth.signPsw(req.body.password) === user.saltedPsw) {
-            auth.createLoginToken(res, user.email, user.saltedPsw, user.name);
+            auth.createLoginToken(res, user.email, user.saltedPsw);
             res.redirect('/');
         } else {
             res.render('account/login', {
@@ -89,7 +89,10 @@ const resetHandler=async(req,res)=> {
     let email = undefined;
     if (req.body.email)
         email = req.body.email;
-    if (email) {
+    let check=true;
+    if(loginData.login)
+        check=loginData.user.email===email;
+    if (email&&check) {
         const up = require('../apis/userProfile');
         let code = await up.sendVerificationCode(email);
         res.cookie('VerificationCode', auth.signPsw(code), {maxAge: 1000 * 60 * 5});
@@ -105,7 +108,8 @@ const resetHandler=async(req,res)=> {
         });
     } else {
         setGlobalEncoder();
-        res.render('account/login', {title:"Reset",exist: false, confirmed: false, login: false, msg: "Verify your email:"});
+        let wrong=!(req.body.email===undefined);
+        res.render('account/login', {title:"Reset",exist: false, confirmed: false, login: false, msg: wrong?"Wrong Email!":"Verify your email:"});
     }
 };
 router.get('/reset',resetHandler);
@@ -121,7 +125,7 @@ router.post('/reg', async (req, res) => {
         user.name=req.body.name;
         user.email=req.body.email;
         await user.save();
-        auth.createLoginToken(res, user.email, user.saltedPsw, user.name);
+        auth.createLoginToken(res, user.email, user.saltedPsw);
         res.redirect('/');
     } else {
         res.render('account/login', {

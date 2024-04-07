@@ -21,9 +21,8 @@ module.exports.signPsw = signPsw;
  * @param {object} res - The response object.
  * @param {string} email - The user's email.
  * @param {string} saltedPsw - The salted password.
- * @param {string} name - The user's name.
  */
-function createLoginToken(res, email, saltedPsw, name) {
+function createLoginToken(res, email, saltedPsw) {
     let token = crypto.createHash('sha256').update(salt + email + salt + saltedPsw).digest('hex');
     let conf = {httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 24 * 7};
     res.cookie('loginToken', token, conf);
