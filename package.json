@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "LGPL-3.0-or-later",
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "dompurify": "^2.0.8",

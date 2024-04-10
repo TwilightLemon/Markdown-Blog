@@ -17,7 +17,6 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
 app.use(methodOverride('_method'));
 app.use(cookieParser());
-//app.use('/highlight.js', express.static('node_modules/highlight.js'));
 
 globalService.setBingImgData();
 app.get('/', async (req, res) => {

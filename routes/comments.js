@@ -7,6 +7,7 @@ router.post('/add', async (req, res) => {
     if (req.query.type === "reply") {
         data=await commentMng.addComment(req.body.articleId, req.body.replyContent, req.cookies, req.body.commentId);
     } else data=await commentMng.addComment(req.body.articleId, req.body.comment, req.cookies);
+
     res.json(data);
 });
 router.delete('/:id', async (req, res) => {

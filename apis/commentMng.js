@@ -1,18 +1,22 @@
 const commentDB = require('../models/comment');
 const auth = require('../apis/loginAuth');
 const up = require('../apis/userProfile');
-
+const {marked}=require('marked');
+const cDom=require('dompurify');
+const {JSDOM}=require('jsdom');
+const dompurify=cDom(new JSDOM().window);
 
 async function getArticleComments(articleId) {
     let comments = await commentDB.findOne({articleId: articleId});
     let commentsList = [];
     if (comments) {
         for (const comment of comments.comments) {
+
             commentsList.push({
                 id: comment._id,
                 email: comment.email,
                 name: await up.getName(comment.email),
-                comment: comment.comment,
+                comment: dompurify.sanitize(marked(comment.comment)),
                 createdAt: comment.createdAt
             });
         }
@@ -44,6 +48,7 @@ async function addComment(articleId, comment, cookies, replyTo = null) {
                 item=comments.comments[comments.comments.length-1];
             }
             await comments.save();
+            item.comment= dompurify.sanitize(marked(item.comment));
             return item;
         } else {
             comments = new commentDB({
@@ -51,7 +56,9 @@ async function addComment(articleId, comment, cookies, replyTo = null) {
                 comments: [item]
             });
             await comments.save();
-            return comments.comments[0];
+            item=comments.comments[0];
+            item.comment= dompurify.sanitize(marked(item.comment));
+            return item;
         }
     }
     return null;
