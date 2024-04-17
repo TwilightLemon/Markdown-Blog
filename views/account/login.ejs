@@ -37,46 +37,51 @@
     <h1 class="mb-4 text-white"><%= title %></h1>
     <h3 class="mb-3 text-white"><%= msg %></h3>
 
-    <form action="#" method="POST">
-        <% if(!confirmed){ %>
-            <div class="form-group">
-                <label for="email" class="text-white">Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <br/>
-            <button type="submit" class="btn btn-primary">Confirm</button>
-        <% }else if(exist){ %>
-        <div class="form-group">
-            <input type="hidden" name="email" value="<%= email %>">
-            <label for="password" class="text-white">Password</label>
-            <input type="password" class="form-control" id="password" name="password" required>
+    <div class="card" style="Width:40%;">
+        <div class="card-body">
+            <form action="#" method="POST">
+                <% if(!confirmed){ %>
+                    <div class="form-group">
+                        <label for="email" class="text-white">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <br />
+                    <button type="submit" class="btn btn-primary">Confirm</button>
+                    <% }else if(exist){ %>
+                        <div class="form-group">
+                            <input type="hidden" name="email" value="<%= email %>">
+                            <label for="password" class="text-white">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <br />
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="button" onclick="return gotoReset('<%=email%>')"
+                            class="btn btn-secondary">Forget?</button>
+                        <% } %>
+            </form>
+    
+            <% if(confirmed && !exist){ %>
+                <form action="/login/reg" method="POST">
+                    <div class="form-group">
+                        <input type="hidden" name="email" value="<%= email %>">
+                        <label for="code" class="text-white">A code has been sent to your email:</label>
+                        <input type="number" class="form-control" id="code" name="code" required>
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label for="password" class="text-white">Set your password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="text-white">Set your nickname</label>
+                        <input type="text" class="form-control" id="name" name="name" value="<%= name %>" required>
+                    </div>
+                    <br />
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+                <% } %>
         </div>
-        <br/>
-        <button type="submit" class="btn btn-primary">Login</button>
-        <button type="button" onclick="return gotoReset('<%=email%>')" class="btn btn-secondary">Forget?</button>
-        <% } %>
-    </form>
-
-    <% if(confirmed && !exist){ %>
-    <form action="/login/reg" method="POST">
-        <div class="form-group">
-            <input type="hidden" name="email" value="<%= email %>">
-            <label for="code" class="text-white">A code has been sent to your email:</label>
-            <input type="number" class="form-control" id="code" name="code" required>
-        </div>
-        <br/>
-        <div class="form-group">
-            <label for="password" class="text-white">Set your password</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-        </div>
-        <div class="form-group">
-            <label for="name" class="text-white">Set your nickname</label>
-            <input type="text" class="form-control" id="name" name="name" value="<%= name %>" required>
-        </div>
-        <br/>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-    <% } %>
+    </div>
 </div>
 <%- include('../_footer.ejs') %>
 </body>

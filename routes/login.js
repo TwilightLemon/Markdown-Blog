@@ -7,7 +7,9 @@ const up = require("../apis/userProfile");
 
 function setGlobalEncoder() {
     const js = `$(function(){
+        let salted=false;
         $('form').on('submit',function(e){
+            if(salted)return;
             var pswInput = $(this).find('input[name="password"]');
             var ori= pswInput.val();
             if(ori!==undefined) {
@@ -19,6 +21,7 @@ function setGlobalEncoder() {
                     padding: CryptoJS.pad.Pkcs7
                 });
                 pswInput.val(ciphertext.toString());
+                salted=true;
                 console.log(ciphertext.toString());
             }
         });
@@ -33,7 +36,7 @@ router.get('/', (req, res) => {
 });
 router.get('/signout', (req, res) => {
     res.cookie('loginToken', '', {maxAge: 1});
-    res.redirect('/');
+    res.redirect(req.headers.referer);
 });
 router.post('/', async (req, res) => {
     console.log(req.body);
@@ -141,5 +144,8 @@ router.post('/reg', async (req, res) => {
     }
 });
 
-
+router.get('/loginWithGithub',async(req,res)=>{
+    console.log(req.body);
+    res.redirect('/');
+});
 module.exports = router;

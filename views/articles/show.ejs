@@ -47,7 +47,9 @@
       </form>
     <%}%>
     <%if(login){%>
-    <button type="button" id="likeBtn" onclick="like('<%=article.id%>')" class="btn btn-primary"><%=likes%>&nbsp;Likes</button>
+    <button type="button" id="likeBtn" onclick="like('<%=article.id%>')" class="btn btn-success"><%=likes%>&nbsp;Likes</button>
+    <%}else{%>
+      <button type="button" id="likeBtn" class="btn btn-success"><%=likes%>&nbsp;Likes</button>
     <%}%>
     <div style="color:rgb(253,253,253)">
       <%- article.sanitizedHtml %>
