@@ -25,6 +25,7 @@ async function sendVerificationCode(email) {
 module.exports.sendVerificationCode = sendVerificationCode;
 
 async function getName(email) {
+    if(email === null) return null;
     let user = await User.findOne({email: email});
     return user ? user.name : null;
 }

@@ -5,9 +5,10 @@ const commentMng = require('../apis/commentMng');
 router.post('/add', async (req, res) => {
     let data;
     if (req.query.type === "reply") {
-        data=await commentMng.addComment(req.body.articleId, req.body.replyContent, req.cookies, req.body.commentId);
+        data=await commentMng.addComment(req.body.articleId, req.body.replyContent, req.cookies, req.body.commentId,req.body.replyToId);
     } else data=await commentMng.addComment(req.body.articleId, req.body.comment, req.cookies);
-
+    if(data.replyTo!==null)
+        data.replyTo=await require('../apis/userProfile').getName(data.replyTo);
     res.json(data);
 });
 router.delete('/:id', async (req, res) => {

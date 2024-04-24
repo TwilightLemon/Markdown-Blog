@@ -11,13 +11,13 @@ async function getArticleComments(articleId) {
     let commentsList = [];
     if (comments) {
         for (const comment of comments.comments) {
-
             commentsList.push({
                 id: comment._id,
                 email: comment.email,
                 name: await up.getName(comment.email),
                 comment: dompurify.sanitize(marked(comment.comment)),
-                createdAt: comment.createdAt
+                createdAt: comment.createdAt,
+                replyTo:await up.getName(comment.replyTo)
             });
         }
     }
@@ -26,11 +26,11 @@ async function getArticleComments(articleId) {
 
 module.exports.getArticleComments = getArticleComments;
 
-async function addComment(articleId, comment, cookies, replyTo = null) {
+async function addComment(articleId, comment, cookies, replyTo = null, replyToId = null) {
     if (await auth.checkLoginToken(cookies)) {
         let userId = cookies.email;
         let comments = await commentDB.findOne({articleId: articleId});
-        let item = {email: userId, comment: comment, createdAt: Date.now()};
+        let item = {email: userId, comment: comment, createdAt: Date.now(), replyTo: replyToId};
         if (comments) {
             if (replyTo != null) {
                 //查找commendId为replyTo的评论

@@ -27,7 +27,7 @@ async function setBingImgData() {
     }
     await update();
     //update every 5h
-    cron.schedule('* * 5 * * *', async () => {
+    cron.schedule('0 */5 * * *', async () => {
         await update();
     });
 }
