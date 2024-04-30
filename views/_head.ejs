@@ -6,5 +6,9 @@
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Twlm's Blog</title>
+    <% if(typeof article !== 'undefined'){ %>
+        <title><%= article.title %>&nbsp;-&nbsp;Twlm's Blog</title>
+    <% }else{ %>
+        <title>Twlm's Blog</title>
+    <% } %>
 </head>

@@ -5,11 +5,11 @@
     <% if(login){%>
     <div class="nav navbar-nav ml-auto" style="position: absolute; right: 20px;">
         <span id="loginUser" class="navbar-text"> welcome back, <a href="/profile/"><%= login_nickname%></a>!&nbsp;</span>
-        <button type="button" class="btn btn-outline-primary me-2 btn-sm" onclick="location.href='/login/signout'">Sign out</button>
+        <button type="button" class="btn btn-outline-primary me-2 btn-xm" onclick="location.href='/login/signout'">Sign out</button>
     </div>
     <%}else{%>
     <div class="nav navbar-nav ml-auto" style="position: absolute; right: 20px;">
-        <button type="button" class="btn btn-outline-primary me-2 btn-sm" onclick="location.href='/login'">Sign in</button>
+        <button type="button" class="btn btn-outline-primary me-2 btn-xm" onclick="location.href='/login'">Sign in</button>
     </div>
     <%}%>
 </nav>

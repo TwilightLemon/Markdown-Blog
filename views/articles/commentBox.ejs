@@ -40,19 +40,19 @@
                     <div class="card-body">
                         <h5 class="card-title"><%= login_nickname %></h5>
                         <div class="card-text">
-                        @`+data.replyTo+': '+data.comment+`
+                        `+(data.replyTo===null?'':'@'+data.replyTo+':')+data.comment+`
                         </div>
-                        <p id="commentItemId" style="display: none;">`+data._id+`</p>
-                        <form id="deleteComment" action="/comments/`+data._id+`?_method=DELETE" method="POST" class="d-inline">
+                        <p id="commentItemId" style="display: none;">`+ data._id + `</p>
+                        <div class="d-grid gap-2 d-md-block" style="position:absolute; bottom: 30px;right: 30px">
+                        <form id="deleteComment" action="/comments/`+ data._id + `?_method=DELETE" method="POST" class="d-inline">
                                 <input type="hidden" name="articleId" id="articleId" value="<%= article.id %>">
-                                <button type="submit" style="position: absolute; right: 20px; bottom:40px"
-                                        class="btn btn-danger btn-sm">Delete
+                                <button type="submit"class="btn btn-danger btn-sm">Delete
                                 </button>
                         </form>
-                        <button type="button" onclick="replyTo('<%= login_nickname %>','`+data._id+`','<%= login_email%>')"
-                                    style="position: absolute; right: 90px; bottom:40px"
+                        <button type="button" onclick="replyTo('<%= login_nickname %>','`+ data._id +`','<%= login_email%>')"
                                     class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Reply
-                            </button>
+                        </button>
+                        </div>
                         <h6 style="font-size: 12px;color:rgba(240,240,240,0.6);">`+data.createdAt+`</h6>
                     </div>
                 </div>
@@ -130,20 +130,21 @@
                         @<%- comment.replyTo %>: &nbsp;<%}%> <%- comment.comment %>
                         </div>
                         <p id="commentItemId" style="display: none;"><%= comment.id %></p>
+                        <div class="d-grid gap-2 d-md-block" style="position:absolute; bottom: 30px;right: 30px">
                         <% if(login && login_email === comment.email){ %>
                             <form id="deleteComment" action="/comments/<%= comment.id %>?_method=DELETE" method="POST" class="d-inline">
                                 <input type="hidden" name="articleId" id="articleId" value="<%= article.id %>">
-                                <button type="submit" style="position: absolute; right: 20px; bottom:40px"
+                                <button type="submit"
                                         class="btn btn-danger btn-sm">Delete
                                 </button>
                             </form>
                         <% } %>
                         <% if(login){ %>
                             <button type="button" onclick="replyTo('<%= comment.name %>','<%= comment.id %>','<%=comment.email%>')"
-                                    style="position: absolute; right: <%= login_email === comment.email ? 90 : 20 %>px; bottom:40px"
                                     class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Reply
                             </button>
                         <% } %>
+                        </div>
                         <h6 style="font-size: 12px;color:rgba(240,240,240,0.6);"><%= comment.createdAt %></h6>
                     </div>
                 </div>
