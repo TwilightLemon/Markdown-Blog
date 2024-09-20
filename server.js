@@ -17,6 +17,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
 app.use(methodOverride('_method'));
 app.use(cookieParser());
+app.use(express.static('public'));
 
 globalService.setBingImgData();
 app.get('/', async (req, res) => {

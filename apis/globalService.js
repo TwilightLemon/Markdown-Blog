@@ -24,6 +24,7 @@ async function setBingImgData() {
     async function update(){
         global.bingImgData = await getBingDailyImage()
         console.log("Bing Image Data Updated");
+        console.log(global.bingImgData);
     }
     await update();
     //update every 5h

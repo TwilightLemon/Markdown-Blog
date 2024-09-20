@@ -3,6 +3,17 @@
 <%- include('../_head.ejs') %>
 <%- include('../_style.ejs') %>
 <%- include('../_nav.ejs') %>
+<style>
+    .card {
+  width: 600px;
+}
+
+@media (max-width: 600px) {
+  .card {
+    width: 100%;
+  }
+}
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
 <script>
     eval(atob("<%= global.EncodedCrytoJS %>"));
@@ -37,7 +48,7 @@
     <h1 class="mb-4 text-white"><%= title %></h1>
     <h3 class="mb-3 text-white"><%= msg %></h3>
 
-    <div class="card" style="Width:40%;">
+    <div class="card">
         <div class="card-body">
             <form action="#" method="POST">
                 <% if(!confirmed){ %>

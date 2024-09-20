@@ -7,7 +7,7 @@ Server: Node.js  Express MongoDB
 Frontend: jQuery Bootstrap
 
 ## 主要功能
- - [x] 账号管理：注册、登录、重置、修改信息
+ - [x] 账号管理：注册、登录、找回、修改信息
  - [x] 文章管理：发布、修改、删除、查看
  - [x] 互动功能：评论、回复、文章点赞
 
