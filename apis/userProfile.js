@@ -3,20 +3,25 @@ const emailService = require("nodemailer");
 const auth = require("../apis/loginAuth");
 
 async function sendVerificationCode(email) {
+    const host = process.env.SMTP_HOST;
+    const user = process.env.SMTP_USER;
+    const key = process.env.SMTP_KEY;
+    if(host==undefined||user==undefined||key==undefined) return null;
+    
     let sender = emailService.createTransport({
-        host: 'smtp.qiye.aliyun.com',
+        host: host,
         port: 465,
         secure: true,
         auth: {
-            user: 'blogadmin@twlm.space',
-            pass: 'sS5Xc0zt7pCeaqL4'
+            user: user,
+            pass: key
         }
     });
     let code = Math.floor(Math.random() * 1000000);
     let info = await sender.sendMail({
-        from: 'BlogAdmin@twlm.space',
+        from: user,
         to: email,
-        subject: 'Verification Code',
+        subject: '[Twlm\' s Blog]Verification Code',
         text: `Your verification code is ${code}`
     });
     return code;

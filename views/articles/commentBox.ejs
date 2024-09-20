@@ -84,7 +84,7 @@
                         success: function (data) {
                             console.log(data);
                             if(data.success) {
-                                form.parent().parent().remove();
+                                form.parent().parent().parent().remove();
                             }
                         }
                     });
